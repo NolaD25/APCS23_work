@@ -26,6 +26,15 @@ public class Animation extends PApplet{
     
     public void draw(){
         background(0);
+        fill(75);
+        rectMode(CENTER);
+        for(int i = 0; i < height; i+= 15){
+        rect(width/2-4, i, 6,5);
+        }
+        for(int i = 7; i < height; i+= 15){
+        rect(width/2+4, i, 6,5);
+        }
+        
         for(Zip z: zips){
             z.display();
             z.update();
