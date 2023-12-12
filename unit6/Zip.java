@@ -8,7 +8,6 @@ public class Zip{
         this.w = w;
         this.h = h;
         
-        
     }
     public void display(){
     
