@@ -10,6 +10,7 @@ public class Project extends PApplet{
     }
     public void draw(){
         background(0);
+        translate(width/2, height/2);
         stroke(255, 0, 0);
         line(0, 0, 400, 0);
         stroke(0, 255, 0);
