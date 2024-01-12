@@ -3,14 +3,14 @@ import processing.core.*;
 public class Block{
     public Block(PApplet p, PVector position, float size){
         this.p = p;
-        this.position = position.copy;
+        this.position = position.copy();
         this.size = size;
     }
     public void display(){
-        p.pushMatrix();
-        p.translate(position.x,position.y,position.z);
+        p.fill(110, 81, 59);
+        p.stroke(255);
+        p.translate(position.x,position.y,position.x);
         p.box(size);
-        p.popMatrix();
         
     }
     
