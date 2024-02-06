@@ -9,7 +9,7 @@ public class Block{
     public void display(){
         p.fill(110, 81, 59);
         p.stroke(255);
-        p.translate(position.x,position.y,position.x);
+        p.translate(position.x,position.y,position.z);
         p.box(size);
         
     }
