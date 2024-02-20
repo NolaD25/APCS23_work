@@ -18,7 +18,9 @@ public class Project extends PApplet{
                 }
             }
         }
-        cam = new PeasyCam(this,400);
+        cam = new PeasyCam(this,0,0,0,400);
+        cam.setMinimumDistance(400);
+        cam.setMaximumDistance(400);
         
         minecraft = loadImage("Minecraft.png");
         minecraft.resize(width/4, height/4);
@@ -60,12 +62,6 @@ public class Project extends PApplet{
     public void startGame(){
         
         background(110, 81, 59);
-        stroke(255, 0, 0);
-        line(0, 0, 400, 0);
-        stroke(0, 255, 0);
-        line(0, 0, 0, 400);
-        stroke(0, 0, 255);
-        line(0, 0, 0, 0, 0, 400);
         
         imageMode(CENTER);
         image(minecraft, 0, -height/8);
@@ -87,6 +83,7 @@ public class Project extends PApplet{
     }
     public void game(){
         background(190, 233, 250);
+        cam.lookAt(x,y,z);
         for(Block b: blocks){
             pushMatrix();
             b.display();
@@ -111,8 +108,8 @@ public class Project extends PApplet{
             blocks.add(b);
         }
         
-        updateCamera();
         
+        updateCamera();
     
     }
     
@@ -139,7 +136,9 @@ public class Project extends PApplet{
             
             if(keyCode == ENTER && currentKey.equals("Down left")){
                 gameState = "Game";
-                System.out.println("it works");
+            }
+            if(keyCode == ENTER && currentKey.equals("Down right")){
+                exit();
             }
         }
         if(gameState.equals("Game")){
@@ -148,12 +147,12 @@ public class Project extends PApplet{
     }
     public void keyReleased(){
         if(gameState.equals("Game")){
-            
+            updateCamera();
         }
     }
     public void updateCamera(){
-        cameraSpeed = 5;
-        
+        //cameraSpeed = 5;
+        /*
         if(keyPressed){
             if(key == ' '){
                 cam.pan(0,-cameraSpeed);
@@ -164,17 +163,36 @@ public class Project extends PApplet{
             }else if(key == 'd'){
                 cam.pan(cameraSpeed, 0);
             }
+        }*/
+        
+        if(keyPressed){
+            if(key == 's'){
+                z+=20;
+            }else if(key == 'w'){
+                z-=20;
+            }else if(key == 'd'){
+                x+=20;
+            }else if(key == 'a'){
+                x-=20;
+            }else if(keyCode == 16){
+                y+=20;
+            }else if(key == ' '){
+                y-=20;
+            }
         }
         
     }
     
     private String gameState = "startGame";
     private ArrayList<Block> blocks;
-    private double cameraSpeed;
+    //private double cameraSpeed;
     private PImage minecraft, play, quitGame, playSelect, quitGameSelect;
     private String currentKey = "Down left";
     private int imageSelect = 2; 
     private int imageSelect2 = 1;
+    private double x = 0;
+    private double y = 0;
+    private double z = 0;
 
     
    
