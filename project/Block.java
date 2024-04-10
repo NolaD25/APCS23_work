@@ -14,6 +14,9 @@ public class Block{
         p.popMatrix();
         
     }
+    public float getX(){return position.x;}
+    public float getY(){return position.y;}
+    public float getZ(){return position.z;}
     
     private void drawBox(){
         p.noStroke();

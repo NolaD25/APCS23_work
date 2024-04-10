@@ -9,6 +9,9 @@ public class Project extends PApplet{
     }
     public void setup(){
         dirt = loadImage("dirtBlock.png");
+        dirt.resize(width/8,width/8);
+        diamond = loadImage("Diamond.png");
+        water = loadImage("Water.png");
         
         blocks = new ArrayList<Block>();
         
@@ -35,6 +38,22 @@ public class Project extends PApplet{
         quitGameSelect = loadImage("QuitGameSelect.png");
         quitGameSelect.resize(width/4, height/4);
         
+        crossHair = loadImage("CrossHair.png");
+        //crossHair.resize(width/2, height/2);
+        
+        hotbar = loadImage("Hotbar.png");
+        
+        selection = loadImage("Selection.png");
+        
+        inventory = loadImage("Inventory.png");
+        inventory.resize(width, height);
+        
+        hand = loadImage("Hand.png");
+        
+        waterB = loadImage("WaterB.png");
+        waterB.resize(width/8, width/8);
+        
+        
         
         
         //prevMouseX = mouseX;
@@ -57,9 +76,11 @@ public class Project extends PApplet{
     public void draw(){
 
         
-        if(gameState == "startGame"){
+        if(gameState.equals("startGame")){
             startGame();
-        }else if(gameState == "Game"){
+        }else if(gameState.equals("Inventory")){
+            inventory();
+        }else if(gameState.equals("Game")){
             game();
         }
     }
@@ -87,6 +108,7 @@ public class Project extends PApplet{
     }
     public void game(){
         background(190, 233, 250);
+        noCursor();
         pushMatrix();
         checkMouseMovement();
         cameraPos.add(cameraVel);
@@ -101,7 +123,7 @@ public class Project extends PApplet{
             popMatrix();
         }
         
-        
+        /*
         translate(width/2, height/2);
         strokeWeight(10);
         stroke(255, 0, 0);
@@ -109,30 +131,89 @@ public class Project extends PApplet{
         stroke(0, 255, 0);
         line(0, 0, 0, 400);
         stroke(0, 0, 255);
-        line(0, 0, 0, 0, 0, 400);
+        line(0, 0, 0, 0, 0, 400); */
         
-        /*if (mouseButton == RIGHT) {
-            PVector positionNew = new PVector();
-            positionNew.x = mouseX;
-            positionNew.y = mouseY;
-            positionNew.z = 100 * 0;
-            Block b = new Block(this,positionNew,100,dirt);
-            blocks.add(b);
-        }*/
+        
         popMatrix();
         
-        
+        hint(DISABLE_DEPTH_TEST);
+        /*fill(255);
+        rect(width/7*6,height/5, 100, 100);
         fill(0);
         text("cameraPos: " + cameraPos.x + ", " + cameraPos.y + ", " + cameraPos.z, width/7*6,height/5);
         text("targetPos: " + targetPos.x + ", " + targetPos.y + ", " + targetPos.z, width/7*6, height/5 + 20);
-        text("heading: " + heading.x + ", " + heading.y + ", " + heading.z, width/7*6, height/5 + 40);
+        text("heading: " + heading.x + ", " + heading.y + ", " + heading.z, width/7*6, height/5 + 40);*/
+        
+        imageMode(CENTER);
+        image(crossHair, width/2, height/2);
+        
+        image(hotbar, width/2, height+70);
+        
+        image(selection, selectionX, height+70);
+        
+        imageMode(CORNER);
+        if(blockTexture == 1){
+            image(dirt, width/5*4, height/2);
+        }else if(blockTexture == 2){
+            image(diamond, width/5*4, height/2);
+        }else if(blockTexture == 3){
+            image(waterB, width/5*4, height/2);
+        }
+        
+        image(hand, width/3*2, height/2);
+        
+        
+        
+        
+        
+        hint(ENABLE_DEPTH_TEST);
+    }
+    public void inventory(){
+        background(0);
+        imageMode(CORNER);
+        image(inventory, 0, 0);
+        imageMode(CENTER);
+        image(selection, selectionX, height+70);
     }
     
     public void mouseMoved(){
         
     }
     public void mousePressed(){
-
+        if(gameState == "Game"){
+            
+            PVector positionNew = targetPos.copy();
+            PVector headingBlock = heading.copy();
+            float dy = cameraPos.y - targetPos.y;
+            dy *= -20;
+            headingBlock.mult(200);
+            positionNew.x += headingBlock.x;
+            positionNew.y += dy;
+            positionNew.z += headingBlock.y;
+            
+            if(mouseButton == LEFT){
+                if(blockTexture == 1){
+                    Block b = new Block(this, positionNew, 100, dirt);
+                    blocks.add(b);
+                }else if(blockTexture == 2){
+                    Block b = new Block(this, positionNew, 100, diamond);
+                    blocks.add(b);
+                }else if(blockTexture == 3){
+                    Block b = new Block(this, positionNew, 100, water);
+                    blocks.add(b);
+                }
+            }
+            if(mouseButton == RIGHT){
+                for(int i = blocks.size()-1; i >= 0; i--){
+                    Block d = blocks.get(i);
+                    if(dist(positionNew.x, positionNew.y, positionNew.z, d.getX(), d.getY(),  d.getZ()) < 50){
+                        blocks.remove(i);
+                    }
+                }
+            }
+            
+        }
+        
 
     }
     public void keyPressed(){
@@ -157,32 +238,55 @@ public class Project extends PApplet{
         }
         if(gameState.equals("Game")){
             updateCamera();
+            chooseBlock();
+            
+            if(key == 'e'){
+                gameState = "Inventory";
+            }
+  
         }
+        if(gameState.equals("Inventory")){
+            if(key ==  'r'){
+                gameState = "Game";
+            }
+        }
+        
     }
     public void keyReleased(){
         if(gameState.equals("Game")){
             if(key == 'a'){
-            //cameraVel.z = 0;
-        }if(key == 'd'){
-            //cameraVel.z = 0;
-        }if(key == 's'){
-            cameraVel.mult(0);
-        }if(key == 'w'){
-            cameraVel.mult(0);
-        }if(keyCode == 32){
-            cameraVel.y = 0;
-        }if(keyCode == 16){
-            cameraVel.y = 0;
-        }
+                cameraVel.mult(0);
+            }if(key == 'd'){
+                cameraVel.mult(0);
+            }if(key == 's'){
+                cameraVel.mult(0);
+            }if(key == 'w'){
+                cameraVel.mult(0);
+            }if(keyCode == 32){
+                cameraVel.y = 0;
+            }if(keyCode == 16){
+                cameraVel.y = 0;
+            }
         }
     }
     public void updateCamera(){
         if(key == 'a'){
+            PVector temp = heading.copy();
+            temp.rotate(-PI/2);
+            
+            cameraVel.x = temp.x;
+            cameraVel.y = 0;
+            cameraVel.z = temp.y;
             
         }if(key == 'd'){
+            PVector temp = heading.copy();
+            temp.rotate(PI/2);
             
+            cameraVel.x = temp.x;
+            cameraVel.y = 0;
+            cameraVel.z = temp.y;
             
-        }if(key == 's'){ //fix
+        }if(key == 's'){ 
             
             cameraVel.x = heading.x;
             cameraVel.y = 0;
@@ -203,7 +307,7 @@ public class Project extends PApplet{
             cameraVel.y = camSpeed;
         }  
     }
-    void checkMouseMovement(){
+    public void checkMouseMovement(){
         /*boolean mouseXInc = mouseX > prevMouseX;
         boolean mouseYInc = mouseY > prevMouseY;
         boolean mouseXDec = mouseX < prevMouseX;
@@ -250,15 +354,30 @@ public class Project extends PApplet{
         targetPos.mult(10);
         targetPos.add(cameraPos);
         
-         targetPos.y = map(mouseY,0,height,-50,50) + cameraPos.y;
+        targetPos.y = map(mouseY,0,height,-50,50) + cameraPos.y;
         
 
     }
-    
+    public void chooseBlock(){
+        if(key == '1'){
+            blockTexture = 1;
+            selectionX = width/2;
+        }
+        if(key == '2'){
+            blockTexture = 2;
+            selectionX = width/2 + 50;
+            
+        }
+        if(key == '3'){
+            blockTexture = 3;
+            selectionX = width/2 + 100;
+            
+        }
+    }
     
     private String gameState = "startGame";
     private ArrayList<Block> blocks;
-    private PImage minecraft, play, quitGame, playSelect, quitGameSelect, dirt;
+    private PImage minecraft, play, quitGame, playSelect, quitGameSelect, dirt, diamond, water, crossHair, hotbar, selection, inventory, hand, waterB;
     private String currentKey = "Down left";
     private int imageSelect = 2; 
     private int imageSelect2 = 1;
@@ -266,9 +385,11 @@ public class Project extends PApplet{
     private PVector cameraPos = new PVector(-10,-10,10);
     private PVector targetPos = new PVector(-10,-10,0);
     private PVector cameraVel = new PVector(0, 0, 0);
-    private PVector heading = new PVector(0,-1);
+    private PVector heading = new PVector(0,-3);
     private int prevMouseX, prevMouseY;
     private float rotationAngle;
+    private int blockTexture = 1;
+    private float selectionX = width/2;
 
     
     public static void main(String[] args){
