@@ -15,6 +15,8 @@ public class Project extends PApplet{
         
         blocks = new ArrayList<Block>();
         
+        mobs = new ArrayList<Mob>();
+        
         for(int i = 0; i <10; i++){
             for(int j = 0; j <10; j++){
                 for(int k = 0; k <10; k++){
@@ -53,6 +55,12 @@ public class Project extends PApplet{
         waterB = loadImage("WaterB.png");
         waterB.resize(width/8, width/8);
         
+        diamondSword = loadImage("DiamondSword.png");
+        diamondSword.resize(width/5, width/5);
+        
+        creeper =loadImage("Creeper.png");
+        creeper.resize(width/6, width/6);
+        
         
         
         
@@ -69,12 +77,12 @@ public class Project extends PApplet{
         position.y = size * blockPositionY;
         position.z = size * blockPositionZ;
             
-        Block b = new Block(this, position, size, image);
+        Block b = new Block(this, position, size, image, 0);
         blocks.add(b);
     }
+
     
     public void draw(){
-
         
         if(gameState.equals("startGame")){
             startGame();
@@ -83,6 +91,7 @@ public class Project extends PApplet{
         }else if(gameState.equals("Game")){
             game();
         }
+        
     }
     public void startGame(){
         
@@ -96,7 +105,6 @@ public class Project extends PApplet{
             
         }else if(imageSelect == 2){
             image(playSelect, width/2, height/4 * 3);
-            
         }
         
         if(imageSelect2 == 1){
@@ -115,12 +123,29 @@ public class Project extends PApplet{
         targetPos.add(cameraVel);
         
         
+        
         camera(cameraPos.x, cameraPos.y, cameraPos.z, targetPos.x, targetPos.y, targetPos.z,0,1,0);
         
+        ArrayList<Block> newBlocks = new ArrayList<Block>();
         for(Block b: blocks){
+            
             pushMatrix();
             b.display();
+            if(b.getWaterCount() > 0 && frameCount%60 == 0){
+                PVector positionNew = new PVector(b.getX(), b.getY() + 100, b.getZ());
+                Block w = new Block(this, positionNew, 100, water, b.getWaterCount() -1);
+                newBlocks.add(w);
+                b.setWaterCount(0);
+            }
             popMatrix();
+        }
+        
+        for(Block n: newBlocks){
+            blocks.add(n);
+
+        }
+        for(Mob m: mobs){
+            m.display();
         }
         
         /*
@@ -158,6 +183,10 @@ public class Project extends PApplet{
             image(diamond, width/5*4, height/2);
         }else if(blockTexture == 3){
             image(waterB, width/5*4, height/2);
+        }else if(blockTexture == 4){
+            image(diamondSword, width/3*2, height/7*3);
+        }else if(blockTexture == 5){
+            image(creeper, width/6*4+100, height/2);
         }
         
         image(hand, width/3*2, height/2);
@@ -191,19 +220,30 @@ public class Project extends PApplet{
             positionNew.y += dy;
             positionNew.z += headingBlock.y;
             
-            if(mouseButton == LEFT){
+            if(mouseButton == RIGHT){
                 if(blockTexture == 1){
-                    Block b = new Block(this, positionNew, 100, dirt);
+                    Block b = new Block(this, positionNew, 100, dirt,0);
                     blocks.add(b);
                 }else if(blockTexture == 2){
-                    Block b = new Block(this, positionNew, 100, diamond);
+                    Block b = new Block(this, positionNew, 100, diamond,0);
                     blocks.add(b);
                 }else if(blockTexture == 3){
-                    Block b = new Block(this, positionNew, 100, water);
+                    Block b = new Block(this, positionNew, 100, water, 5);
                     blocks.add(b);
+                    //waterFlow(positionNew);
+                }else if(blockTexture == 4){
+                    for(Mob m: mobs){
+                        if(dist(positionNew.x, positionNew.y, positionNew. z, m.getX(), m.getY(), m.getZ()) < 50){
+                            m.update();
+                            m.setHealth(m.getHealth() - 1);
+                        }
+                    }
+                }else if(blockTexture == 5){
+                    Mob m = new Mob(this, positionNew, 10);
+                    mobs.add(m);
                 }
             }
-            if(mouseButton == RIGHT){
+            if(mouseButton == LEFT){
                 for(int i = blocks.size()-1; i >= 0; i--){
                     Block d = blocks.get(i);
                     if(dist(positionNew.x, positionNew.y, positionNew.z, d.getX(), d.getY(),  d.getZ()) < 50){
@@ -373,20 +413,59 @@ public class Project extends PApplet{
             selectionX = width/2 + 100;
             
         }
+        if(key == '4'){
+            blockTexture = 4;
+            selectionX = width/2 + 170;
+        }
+        if(key == '5'){
+            blockTexture = 5;
+            selectionX = width/2 +240;
+        }
+        if(key == '6'){
+            blockTexture = 6;
+            selectionX = width/2 +310;
+        }
+        if(key == '7'){
+            blockTexture = 7;
+            selectionX = width/2 +380;
+        }
+        if(key == '8'){
+            blockTexture = 8;
+            selectionX = width/2 +450;
+        }
+        if(key == '9'){
+            blockTexture = 9;
+            selectionX = width/2 + 520;
+        }
     }
+    /*public void waterFlow(PVector position){
+        int startTime = millis();
+        for(int i = 0; i < 100; i+=10){
+            if(millis() - startTime >= 500){
+                position.y += i;
+                Block b = new Block(this, position, 100, water);
+                blocks.add(b);
+                startTime = millis();
+                
+            }
+        }
+        
+    }*/
     
     private String gameState = "startGame";
     private ArrayList<Block> blocks;
-    private PImage minecraft, play, quitGame, playSelect, quitGameSelect, dirt, diamond, water, crossHair, hotbar, selection, inventory, hand, waterB;
+    private ArrayList<Mob> mobs;
+    private PVector mobPosition;
+    private PImage minecraft, play, quitGame, playSelect, quitGameSelect, dirt, diamond, water, crossHair, hotbar, selection, inventory, hand, waterB, diamondSword, creeper;
     private String currentKey = "Down left";
     private int imageSelect = 2; 
     private int imageSelect2 = 1;
-    private int camSpeed = 2;
+    private int camSpeed = 3;
     private PVector cameraPos = new PVector(-10,-10,10);
     private PVector targetPos = new PVector(-10,-10,0);
     private PVector cameraVel = new PVector(0, 0, 0);
     private PVector heading = new PVector(0,-3);
-    private int prevMouseX, prevMouseY;
+    //private int prevMouseX, prevMouseY;
     private float rotationAngle;
     private int blockTexture = 1;
     private float selectionX = width/2;

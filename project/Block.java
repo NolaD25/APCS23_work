@@ -1,11 +1,12 @@
 import processing.core.*;
 
 public class Block{
-    public Block(PApplet p, PVector position, float size, PImage texture){
+    public Block(PApplet p, PVector position, float size, PImage texture, int waterCount){
         this.p = p;
         this.position = position.copy();
         this.size = size;
         this.texture = texture;
+        this.waterCount = waterCount;
     }
     public void display(){
         p.pushMatrix();
@@ -17,6 +18,12 @@ public class Block{
     public float getX(){return position.x;}
     public float getY(){return position.y;}
     public float getZ(){return position.z;}
+    public int getWaterCount(){return waterCount;}
+    
+    public void setWaterCount(int waterCount){
+        this.waterCount = waterCount;
+        
+    } 
     
     private void drawBox(){
         p.noStroke();
@@ -65,5 +72,6 @@ public class Block{
     private PVector position;
     private float size;
     private PImage texture;
+    private int waterCount;
     
 }
