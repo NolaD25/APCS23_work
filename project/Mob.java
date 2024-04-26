@@ -24,22 +24,22 @@ public class Mob{
     public void display(){
         p.noStroke();
         p.fill(inter,alpha);
-            p.pushMatrix();
-                p.translate(position.x, position.y, position.z);
-                p.box(50);
-            p.popMatrix();
-            p.pushMatrix();
-                p.translate(position.x, position.y+50,position.z);
-                p.box(50,100,25);
-            p.popMatrix();
-            p.pushMatrix();
-                p.translate(position.x,position.y+112,position.z+25);
-                p.box(50,25,25);
-            p.popMatrix();
-            p.pushMatrix();
-                p.translate(position.x,position.y+112,position.z-25);
-                p.box(50,25,25);
-            p.popMatrix();;
+        p.pushMatrix();
+            p.translate(position.x, position.y, position.z);
+            p.box(50);
+        p.popMatrix();
+        p.pushMatrix();
+            p.translate(position.x, position.y+50,position.z);
+            p.box(50,100,25);
+        p.popMatrix();
+        p.pushMatrix();
+            p.translate(position.x,position.y+112,position.z+25);
+            p.box(50,25,25);
+        p.popMatrix();
+        p.pushMatrix();
+            p.translate(position.x,position.y+112,position.z-25);
+            p.box(50,25,25);
+        p.popMatrix();;
         if(healthBar <= 0){
             alpha = 0;
         }

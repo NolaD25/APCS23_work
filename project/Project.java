@@ -1,6 +1,7 @@
 import processing.core.*;
 import java.util.*;
-import peasy.*;
+import processing.sound.*;
+
 
 public class Project extends PApplet{
     
@@ -61,6 +62,10 @@ public class Project extends PApplet{
         creeper =loadImage("Creeper.png");
         creeper.resize(width/6, width/6);
         
+        dirtSound = new SoundFile(this, "Dirt Sound.mp3");
+        //diamondSound = new SoundFile(this, "Stone Sound.mp3");
+        waterSound = new SoundFile(this, "Water Sound.mp3");
+        creeperSound = new SoundFile(this, "Creeper Sound.mp3");
         
         
         
@@ -197,6 +202,7 @@ public class Project extends PApplet{
         
         hint(ENABLE_DEPTH_TEST);
     }
+    
     public void inventory(){
         background(0);
         imageMode(CORNER);
@@ -204,10 +210,11 @@ public class Project extends PApplet{
         imageMode(CENTER);
         image(selection, selectionX, height+70);
     }
-    
-    public void mouseMoved(){
+    public void Quit(){
+
         
     }
+
     public void mousePressed(){
         if(gameState == "Game"){
             
@@ -224,13 +231,16 @@ public class Project extends PApplet{
                 if(blockTexture == 1){
                     Block b = new Block(this, positionNew, 100, dirt,0);
                     blocks.add(b);
+                    dirtSound.play();
                 }else if(blockTexture == 2){
                     Block b = new Block(this, positionNew, 100, diamond,0);
                     blocks.add(b);
+                    
                 }else if(blockTexture == 3){
                     Block b = new Block(this, positionNew, 100, water, 5);
                     blocks.add(b);
                     //waterFlow(positionNew);
+                    waterSound.play();
                 }else if(blockTexture == 4){
                     for(Mob m: mobs){
                         if(dist(positionNew.x, positionNew.y, positionNew. z, m.getX(), m.getY(), m.getZ()) < 50){
@@ -241,6 +251,7 @@ public class Project extends PApplet{
                 }else if(blockTexture == 5){
                     Mob m = new Mob(this, positionNew, 10);
                     mobs.add(m);
+                    creeperSound.play();
                 }
             }
             if(mouseButton == LEFT){
@@ -396,8 +407,8 @@ public class Project extends PApplet{
         
         targetPos.y = map(mouseY,0,height,-50,50) + cameraPos.y;
         
-
     }
+    
     public void chooseBlock(){
         if(key == '1'){
             blockTexture = 1;
@@ -431,13 +442,14 @@ public class Project extends PApplet{
         }
         if(key == '8'){
             blockTexture = 8;
-            selectionX = width/2 +450;
+            selectionX = width/2 +470;
         }
         if(key == '9'){
             blockTexture = 9;
-            selectionX = width/2 + 520;
+            selectionX = width/2 + 570;
         }
     }
+    
     /*public void waterFlow(PVector position){
         int startTime = millis();
         for(int i = 0; i < 100; i+=10){
@@ -469,6 +481,7 @@ public class Project extends PApplet{
     private float rotationAngle;
     private int blockTexture = 1;
     private float selectionX = width/2;
+    SoundFile dirtSound, diamondSound, waterSound, creeperSound;
 
     
     public static void main(String[] args){
